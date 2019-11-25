@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -35,16 +34,16 @@ public class Main {
 
         // Discover tests
         Map<Provider, Set<String>> testsPerProvider = providers.stream()
-                .collect(toMap(identity(), discoverTestsInFork(testsDiscoveredBySurefire)));
+                .collect(toMap(identity(), provider -> discoverTestsInFork(provider, testsDiscoveredBySurefire)));
 
         // Distribute tests for execution
         testsPerProvider.forEach((provider, tests) ->
                 tests.forEach(test -> executeTestInFork(provider, test)));
     }
 
-    private static Function<Provider, Set<String>> discoverTestsInFork(Set<String> testsDiscoveredBySurefire) {
+    private static Set<String> discoverTestsInFork(Provider provider, Set<String> testsDiscoveredBySurefire) {
         // DiscoverTests may load classes. Should happen in a separate fork
-        return provider -> provider.discoverTests(testsDiscoveredBySurefire);
+        return provider.discoverTests(testsDiscoveredBySurefire);
     }
 
     private static void executeTestInFork(Provider provider, String test) {
