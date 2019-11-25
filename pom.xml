@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cucumber</groupId>
+    <artifactId>surefire-1724-proposal</artifactId>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <junit.version>4.12</junit.version>
+        <junit-jupiter.version>5.5.2</junit-jupiter.version>
+        <junit-platform.version>1.5.2</junit-platform.version>
+        <cucumber.version>5.0.0-RC2</cucumber.version>
+        <maven.compiler.version>3.3</maven.compiler.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit-platform.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
