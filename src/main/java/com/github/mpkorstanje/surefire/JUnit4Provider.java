@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class JUnit4Provider implements Provider {
     @Override
-    public Set<String> discoverTests(SurefireTestDiscoveryRequest surefireRequest) {
+    public Set<String> discoverTests(Set<String> testsDiscoveredBySurefire) {
         System.out.println("JUnit 4 does not support discovery returning tests discovered by surefire");
-        return surefireRequest.testsDiscoveredBySurefire;
+        return testsDiscoveredBySurefire;
     }
 
     @Override

@@ -21,33 +21,30 @@ public class Main {
 
     private static List<Provider> providers = asList(
             new JUnit4Provider(),
-            new JUnitPlatformProvider()
+            new JUnitPlatformProvider(
+                    classPathRootDiscoverySelectorFromConfiguration(),
+                    otherDiscoverySelectorsFromConfiguration()
+            )
     );
+
 
     public static void main(String... args) {
 
         // Construct discovery request
-        SurefireTestDiscoveryRequest surefireTestDiscoveryRequest = new SurefireTestDiscoveryRequest(
-                surefireTestDiscovery(),
-                classPathRootDiscoveryFromConfiguration()
-        );
+        Set<String> testsDiscoveredBySurefire = surefireTestDiscovery();
 
         // Discover tests
         Map<Provider, Set<String>> testsPerProvider = providers.stream()
-                .collect(toMap(identity(), discoverTestsInFork(surefireTestDiscoveryRequest)));
+                .collect(toMap(identity(), discoverTestsInFork(testsDiscoveredBySurefire)));
 
         // Distribute tests for execution
         testsPerProvider.forEach((provider, tests) ->
                 tests.forEach(test -> executeTestInFork(provider, test)));
     }
 
-    private static Set<Path> classPathRootDiscoveryFromConfiguration() {
-        return Collections.singleton(new File("target/classes").getAbsoluteFile().toPath());
-    }
-
-    private static Function<Provider, Set<String>> discoverTestsInFork(SurefireTestDiscoveryRequest surefireTestDiscoveryRequest) {
+    private static Function<Provider, Set<String>> discoverTestsInFork(Set<String> testsDiscoveredBySurefire) {
         // DiscoverTests may load classes. Should happen in a separate fork
-        return provider -> provider.discoverTests(surefireTestDiscoveryRequest);
+        return provider -> provider.discoverTests(testsDiscoveredBySurefire);
     }
 
     private static void executeTestInFork(Provider provider, String test) {
@@ -61,4 +58,13 @@ public class Main {
                 .map(Class::getName)
                 .collect(Collectors.toSet());
     }
+
+    private static Set<Path> classPathRootDiscoverySelectorFromConfiguration() {
+        return Collections.singleton(new File("target/classes").getAbsoluteFile().toPath());
+    }
+
+    private static Object[] otherDiscoverySelectorsFromConfiguration() {
+        return new Object[0];
+    }
+
 }

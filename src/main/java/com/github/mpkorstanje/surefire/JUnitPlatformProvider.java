@@ -11,6 +11,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.LoggingListener;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,16 +23,22 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 public class JUnitPlatformProvider implements Provider {
 
     private final Launcher launcher = LauncherFactory.create();
+    private final Set<Path> classPathRootDiscoverySelectorFromConfiguration;
+
+    JUnitPlatformProvider(Set<Path> classPathRootDiscoverySelectorFromConfiguration,
+                          Object... otherDiscoverySelectorsFromConfiguration) {
+        this.classPathRootDiscoverySelectorFromConfiguration = classPathRootDiscoverySelectorFromConfiguration;
+    }
 
     @Override
-    public Set<String> discoverTests(SurefireTestDiscoveryRequest surefireRequest) {
+    public Set<String> discoverTests(Set<String> testsDiscoveredBySurefire) {
         System.out.println("JUnit Platform launching test engines to discover tests");
 
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                .selectors(surefireRequest.testsDiscoveredBySurefire.stream()
+                .selectors(testsDiscoveredBySurefire.stream()
                         .map(DiscoverySelectors::selectClass)
                         .collect(toList()))
-                .selectors(selectClasspathRoots(surefireRequest.classPathRoots))
+                .selectors(selectClasspathRoots(classPathRootDiscoverySelectorFromConfiguration))
                 .build();
 
         TestPlan testPlan = launcher.discover(request);
